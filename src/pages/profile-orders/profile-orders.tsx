@@ -1,10 +1,36 @@
+import { type FC, useEffect } from 'react';
+
+import {
+  selectProfileOrders,
+  selectProfileOrdersError,
+  selectProfileOrdersIsLoading
+} from '@selectors';
+import { Preloader } from '@ui';
 import { ProfileOrdersUI } from '@ui-pages';
-import { TOrder } from '@utils-types';
-import { FC } from 'react';
+
+import { useSelector, useDispatch } from '../../services/store';
+import { fetchProfileOrders } from '../../reducers/profile-orders';
+import { fetchIngredients } from '../../reducers/ingredients';
 
 export const ProfileOrders: FC = () => {
-  /** TODO: взять переменную из стора */
-  const orders: TOrder[] = [];
+  const dispatch = useDispatch();
+
+  const orders = useSelector(selectProfileOrders);
+  const isLoading = useSelector(selectProfileOrdersIsLoading);
+  const error = useSelector(selectProfileOrdersError);
+
+  useEffect(() => {
+    dispatch(fetchProfileOrders());
+    dispatch(fetchIngredients());
+  }, [dispatch]);
+
+  if (isLoading) {
+    return <Preloader />;
+  }
+
+  if (error) {
+    return <p>Ошибка при загрузке заказов</p>;
+  }
 
   return <ProfileOrdersUI orders={orders} />;
 };
