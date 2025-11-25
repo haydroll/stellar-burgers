@@ -22,6 +22,7 @@ import {
 
 import { useDispatch } from '../../services/store';
 import { getUser } from '../../reducers/user';
+import { fetchIngredients } from '../../reducers/ingredients';
 
 import '../../index.css';
 import styles from './app.module.css';
@@ -37,6 +38,7 @@ const App: FC = () => {
 
   useEffect(() => {
     dispatch(getUser());
+    dispatch(fetchIngredients());
   }, [dispatch]);
 
   return (

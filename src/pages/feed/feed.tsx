@@ -6,7 +6,6 @@ import { FeedUI } from '@ui-pages';
 
 import { useDispatch, useSelector } from '../../services/store';
 import { fetchFeed } from '../../reducers/feed';
-import { fetchIngredients } from '../../reducers/ingredients';
 
 export const Feed: FC = () => {
   const dispatch = useDispatch();
@@ -16,7 +15,6 @@ export const Feed: FC = () => {
 
   useEffect(() => {
     dispatch(fetchFeed());
-    dispatch(fetchIngredients());
   }, [dispatch]);
 
   if (!orders.length || isLoading) {

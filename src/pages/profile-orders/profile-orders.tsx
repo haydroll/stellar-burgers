@@ -10,7 +10,6 @@ import { ProfileOrdersUI } from '@ui-pages';
 
 import { useSelector, useDispatch } from '../../services/store';
 import { fetchProfileOrders } from '../../reducers/profile-orders';
-import { fetchIngredients } from '../../reducers/ingredients';
 
 export const ProfileOrders: FC = () => {
   const dispatch = useDispatch();
@@ -21,7 +20,6 @@ export const ProfileOrders: FC = () => {
 
   useEffect(() => {
     dispatch(fetchProfileOrders());
-    dispatch(fetchIngredients());
   }, [dispatch]);
 
   if (isLoading) {
