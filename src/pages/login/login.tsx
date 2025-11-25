@@ -1,5 +1,5 @@
 import { type FC, type SyntheticEvent, useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Location, useLocation, useNavigate } from 'react-router-dom';
 
 import { LoginUI } from '@ui-pages';
 
@@ -13,6 +13,9 @@ export const Login: FC = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const state = location.state as { from?: Location };
 
   const handleSubmit = useCallback(
     (event: SyntheticEvent) => {
@@ -20,7 +23,7 @@ export const Login: FC = () => {
 
       dispatch(loginUser({ email, password })).then((res) => {
         if (loginUser.fulfilled.match(res)) {
-          navigate('/', { replace: true });
+          navigate(state.from ?? '/', { replace: true });
         } else {
           setError((res.payload as string) || 'Ошибка авторизации');
         }

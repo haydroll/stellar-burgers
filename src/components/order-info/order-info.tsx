@@ -1,37 +1,38 @@
-import { type FC, useMemo } from 'react';
+import { type FC, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { OrderInfoUI, Preloader } from '@ui';
-import type { TIngredient } from '@utils-types';
-import { selectIngredientsItems, selectOrders, selectOrder } from '@selectors';
+import { TOrder, type TIngredient } from '@utils-types';
+import { selectIngredientsItems } from '@selectors';
 
 import { useSelector } from '../../services/store';
+import { getOrderByNumberApi } from '@api';
 
 export const OrderInfo: FC = () => {
   const { number } = useParams<{ number: string }>();
 
-  const order = useSelector(selectOrder);
-  const orders = useSelector(selectOrders);
   const ingredients = useSelector(selectIngredientsItems);
 
-  const orderData = useMemo(() => {
-    if (order) {
-      return order;
+  const [order, setOrder] = useState<TOrder>();
+
+  useEffect(() => {
+    if (number === undefined) {
+      return;
     }
 
-    if (number !== undefined && orders) {
-      return orders.find((o) => o.number === +number);
-    }
-  }, [order, orders, number]);
+    getOrderByNumberApi(+number)
+      .then((res) => res.orders[0])
+      .then(setOrder);
+  }, []);
 
   const orderInfo = useMemo(() => {
-    if (!orderData || !ingredients.length) {
+    if (!order || !ingredients.length) {
       return null;
     }
 
-    const date = new Date(orderData.createdAt);
+    const date = new Date(order.createdAt);
 
-    const ingredientsInfo = orderData.ingredients.reduce<
+    const ingredientsInfo = order.ingredients.reduce<
       Record<string, TIngredient & { count: number }>
     >((info, ingredientId) => {
       if (!info[ingredientId]) {
@@ -52,8 +53,8 @@ export const OrderInfo: FC = () => {
       0
     );
 
-    return { ...orderData, ingredientsInfo, date, total };
-  }, [orderData, ingredients]);
+    return { ...order, ingredientsInfo, date, total };
+  }, [order, ingredients]);
 
   if (!orderInfo) {
     return <Preloader />;

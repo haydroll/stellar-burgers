@@ -9,7 +9,10 @@ import {
   ResetPassword,
   Profile,
   ProfileOrders,
-  NotFound404
+  ProfileOrder,
+  FeedOrder,
+  NotFound404,
+  Ingredient
 } from '@pages';
 import {
   AppHeader,
@@ -96,7 +99,16 @@ const App: FC = () => {
             </ProtectedRoute>
           }
         />
-        <Route path='/ingredients/:id' element={<IngredientDetails />} />
+        <Route path='/feed/:number' element={<FeedOrder />} />
+        <Route path='/ingredients/:id' element={<Ingredient />} />
+        <Route
+          path='/profile/orders/:number'
+          element={
+            <ProtectedRoute>
+              <ProfileOrder />
+            </ProtectedRoute>
+          }
+        />
         <Route path='*' element={<NotFound404 />} />
       </Routes>
 

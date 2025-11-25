@@ -1,0 +1,7 @@
+.container {
+  margin: 100px auto 0;
+}
+
+.container p:first-of-type {
+  text-align: center;
+}
