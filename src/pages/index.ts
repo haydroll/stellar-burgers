@@ -5,5 +5,8 @@ export * from './login';
 export * from './not-fount-404';
 export * from './profile';
 export * from './profile-orders';
+export * from './profile-order';
+export * from './feed-order';
 export * from './register';
+export * from './ingredient';
 export * from './reset-password';

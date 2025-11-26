@@ -1,0 +1,1 @@
+export { IngredientUI } from './ingredient';

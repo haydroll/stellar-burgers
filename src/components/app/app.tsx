@@ -1,14 +1,149 @@
-import { ConstructorPage } from '@pages';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { type FC, useCallback, useEffect } from 'react';
+import {
+  ConstructorPage,
+  Feed,
+  Login,
+  Register,
+  ForgotPassword,
+  ResetPassword,
+  Profile,
+  ProfileOrders,
+  ProfileOrder,
+  FeedOrder,
+  NotFound404,
+  Ingredient
+} from '@pages';
+import {
+  AppHeader,
+  Modal,
+  OrderInfo,
+  IngredientDetails,
+  ProtectedRoute,
+  GuestRoute
+} from '@components';
+
+import { useDispatch } from '../../services/store';
+import { getUser } from '../../reducers/user';
+import { fetchIngredients } from '../../reducers/ingredients';
+
 import '../../index.css';
 import styles from './app.module.css';
 
-import { AppHeader } from '@components';
+const App: FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-const App = () => (
-  <div className={styles.app}>
-    <AppHeader />
-    <ConstructorPage />
-  </div>
-);
+  const state = location.state as { background?: Location };
+
+  const handleCloseModal = useCallback(() => navigate(-1), [navigate]);
+
+  useEffect(() => {
+    dispatch(getUser());
+    dispatch(fetchIngredients());
+  }, [dispatch]);
+
+  return (
+    <div className={styles.app}>
+      <AppHeader />
+
+      <Routes location={state?.background || location}>
+        <Route path='/' element={<ConstructorPage />} />
+        <Route path='/feed' element={<Feed />} />
+        <Route
+          path='/login'
+          element={
+            <GuestRoute>
+              <Login />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path='/register'
+          element={
+            <GuestRoute>
+              <Register />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path='/forgot-password'
+          element={
+            <GuestRoute>
+              <ForgotPassword />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path='/reset-password'
+          element={
+            <GuestRoute>
+              <ResetPassword />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path='/profile'
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/profile/orders'
+          element={
+            <ProtectedRoute>
+              <ProfileOrders />
+            </ProtectedRoute>
+          }
+        />
+        <Route path='/feed/:number' element={<FeedOrder />} />
+        <Route path='/ingredients/:id' element={<Ingredient />} />
+        <Route
+          path='/profile/orders/:number'
+          element={
+            <ProtectedRoute>
+              <ProfileOrder />
+            </ProtectedRoute>
+          }
+        />
+        <Route path='*' element={<NotFound404 />} />
+      </Routes>
+
+      {state?.background && (
+        <Routes>
+          <Route
+            path='/feed/:number'
+            element={
+              <Modal title='Детали заказа' onClose={handleCloseModal}>
+                <OrderInfo />
+              </Modal>
+            }
+          />
+          <Route
+            path='/ingredients/:id'
+            element={
+              <Modal title='Детали ингредиента' onClose={handleCloseModal}>
+                <IngredientDetails />
+              </Modal>
+            }
+          />
+          <Route
+            path='/profile/orders/:number'
+            element={
+              <ProtectedRoute>
+                <Modal title='Детали заказа' onClose={handleCloseModal}>
+                  <OrderInfo />
+                </Modal>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      )}
+    </div>
+  );
+};
 
 export default App;
