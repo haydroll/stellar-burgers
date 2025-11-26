@@ -15,7 +15,7 @@ export const Login: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const state = location.state as { from?: Location };
+  const state = location.state as { from?: Location } | undefined;
 
   const handleSubmit = useCallback(
     (event: SyntheticEvent) => {
@@ -23,7 +23,7 @@ export const Login: FC = () => {
 
       dispatch(loginUser({ email, password })).then((res) => {
         if (loginUser.fulfilled.match(res)) {
-          navigate(state.from ?? '/', { replace: true });
+          navigate(state?.from ?? '/', { replace: true });
         } else {
           setError((res.payload as string) || 'Ошибка авторизации');
         }
